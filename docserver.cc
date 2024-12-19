@@ -38,7 +38,8 @@ enum ErrorCode {
   ERROR_PETICION_VACIA = 12,
   ERROR_AL_ABRIR_ARCHIVO = 13,
   ERROR_AL_MAPEAR_ARCHIVO = 14,
-  ERROR_AL_OBTENER_EL_TAMAÑO_ARCHIVO = 15
+  ERROR_AL_OBTENER_EL_TAMAÑO_ARCHIVO = 15,
+  ERROR_CLIENTE = 16
 };
 
 /**
@@ -165,12 +166,14 @@ ErrorCode readClientRequest(int clientSocket, std::string& archivo) {
     if (bytesRead <= 0) {
         if (bytesRead == 0) {
             std::cerr << "Conexión cerrada por el cliente" << std::endl;
+            return ERROR_PETICION_VACIA;
         } else if (errno == ECONNRESET) {
             std::cerr << "Conexión reiniciada por el cliente" << std::endl;
+            return ERROR_CLIENTE;
         } else {
             std::cerr << "Error al recibir la petición del cliente" << std::endl;
+            return ERROR_PETICION_VACIA;
         }
-        return ERROR_PETICION_VACIA;
     }
 
     buffer[bytesRead] = '\0'; // Asegurarse de que el string esté terminado
